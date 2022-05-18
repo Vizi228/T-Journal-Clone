@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { LeftMenu } from '../components/LeftMenu';
-import { SideComments } from '../components/SideComments';
+import { SideComments } from '../components/CommentsSection/SideComments';
 
 interface MainLayoutProps {
     hideComments?: boolean;
@@ -19,6 +19,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
     return (
         <div className={clsx('wrapper', className)}>
+
             {!hideMenu &&
                 <div className="leftSide">
                     <LeftMenu />

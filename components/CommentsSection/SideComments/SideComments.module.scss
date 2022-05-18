@@ -44,3 +44,7 @@
   font-size: 15px;
   font-weight: 500;
 }
+
+.activeButton {
+  transform: rotate(-90deg) translateY(100px);
+}
