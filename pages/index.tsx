@@ -1,6 +1,5 @@
 import Head from 'next/head';
 
-import { Header } from '../components/Header';
 import { LeftMenu } from '../components/LeftMenu';
 import { Post } from '../components/Post';
 import { SideComments } from '../components/CommentsSection/SideComments';
