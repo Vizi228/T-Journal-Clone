@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, TextField, Typography } from '@material-ui/core';
 import styles from '../AuthDialogs.module.scss';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Alert } from '@material-ui/lab';
 import { FormProvider, useForm } from 'react-hook-form';
 import { loginValidation } from '../../../utils/schemas/loginValidation'
 import FormField from '../../FormField';
+import nookies, { setCookie } from 'nookies';
+import { UserApi } from '../../../utils/api/index';
+import { LoginDto } from '../../../utils/api/types';
+import { useAppDispatch } from '../../../redux/hooks';
+import { setUserData } from '../../../redux/slices/user';
 
 interface LoginFormProps {
     onOpenMain: () => void,
@@ -14,11 +20,28 @@ interface LoginFormProps {
 
 
 const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister }) => {
+    const [errorMessage, setErrorMessage] = useState('')
+    const dispatch = useAppDispatch()
     const form = useForm({
         mode: 'onSubmit',
         resolver: yupResolver(loginValidation)
     })
-    const onSubmit = data => console.log(data);
+
+    const onSubmit = async (dto: LoginDto) => {
+        try {
+            const data = await UserApi.login(dto);
+            setCookie(null, 'authToken', data.token, {
+                maxAge: 30 * 24 * 60 * 60,
+                path: '/'
+            });
+            setErrorMessage('')
+            dispatch(setUserData(data))
+        } catch (error) {
+            if (error.response) {
+                setErrorMessage(error.response.data.message)
+            }
+        }
+    }
     return (
         <div>
             <FormProvider {...form}>
@@ -30,8 +53,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister }) => 
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField name='email' label='Введите почту' />
                     <FormField name='password' label='Введите пароль' />
+                    {errorMessage && <Alert className='mb-10' severity="error">{errorMessage}</Alert>}
                     <div className="d-flex align-center justify-between">
-                        <Button type="submit" color="primary" variant="contained">
+                        <Button disabled={form.formState.isSubmitting} type="submit" color="primary" variant="contained">
                             Войти
                         </Button>
                         <Button type="submit" onClick={onOpenRegister} color="primary" variant="text" className='ml-10'>

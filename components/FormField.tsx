@@ -4,11 +4,12 @@ import { useFormContext } from 'react-hook-form';
 type FormFieldProps = {
     name: string,
     label: string,
+    value?: string,
+    onChange?: (arg1: string) => void,
 }
 
-const FormField: React.FC<FormFieldProps> = ({ name, label }) => {
+const FormField: React.FC<FormFieldProps> = ({ name, label, value, onChange }) => {
     const { register, formState: { errors } } = useFormContext();
-    console.log(errors)
     return (
         <TextField
             {...register(name)}
