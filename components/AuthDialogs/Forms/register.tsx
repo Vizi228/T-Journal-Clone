@@ -17,10 +17,11 @@ import { setUserData } from '../../../redux/slices/user';
 interface RegisterFormProps {
     onOpenMain: () => void,
     onOpenLogin: () => void,
+    onClose: () => void;
 }
 
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onOpenMain, onOpenLogin }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onOpenMain, onOpenLogin, onClose }) => {
     const [errorMessage, setErrorMessage] = useState('')
     const form = useForm({
         mode: 'onSubmit',
@@ -36,6 +37,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onOpenMain, onOpenLogin }) 
             })
             setErrorMessage('');
             dispatch(setUserData(data))
+            onClose()
         } catch (error) {
             if (error.response) {
                 setErrorMessage(error.response.data.message)

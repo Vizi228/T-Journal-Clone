@@ -20,13 +20,13 @@ const AuthDialogs: React.FC<AuthDialogProps> = ({ onClose, visible }) => {
         <DialogContentText>
           <div className={styles.content}>
             {formType === 'main' && (
-              <MainForm onOpenLogin={() => setFormType('login')} />
+              <MainForm onClose={onClose} onOpenLogin={() => setFormType('login')} />
             )}
             {formType === 'login' && (
-              <LoginForm onOpenMain={() => setFormType('main')} onOpenRegister={() => setFormType('register')} />
+              <LoginForm onClose={onClose} onOpenMain={() => setFormType('main')} onOpenRegister={() => setFormType('register')} />
             )}
             {formType === 'register' && (
-              <RegisterForm onOpenLogin={() => setFormType('login')} onOpenMain={() => setFormType('main')} />
+              <RegisterForm onClose={onClose} onOpenLogin={() => setFormType('login')} onOpenMain={() => setFormType('main')} />
             )}
           </div>
         </DialogContentText>

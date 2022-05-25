@@ -7,7 +7,7 @@ import { Alert } from '@material-ui/lab';
 import { FormProvider, useForm } from 'react-hook-form';
 import { loginValidation } from '../../../utils/schemas/loginValidation'
 import FormField from '../../FormField';
-import nookies, { setCookie } from 'nookies';
+import { setCookie } from 'nookies';
 import { UserApi } from '../../../utils/api/index';
 import { LoginDto } from '../../../utils/api/types';
 import { useAppDispatch } from '../../../redux/hooks';
@@ -15,11 +15,12 @@ import { setUserData } from '../../../redux/slices/user';
 
 interface LoginFormProps {
     onOpenMain: () => void,
-    onOpenRegister: () => void
+    onOpenRegister: () => void,
+    onClose: () => void;
 }
 
 
-const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister, onClose }) => {
     const [errorMessage, setErrorMessage] = useState('')
     const dispatch = useAppDispatch()
     const form = useForm({
@@ -36,6 +37,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister }) => 
             });
             setErrorMessage('')
             dispatch(setUserData(data))
+            onClose();
         } catch (error) {
             if (error.response) {
                 setErrorMessage(error.response.data.message)

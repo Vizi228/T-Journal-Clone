@@ -5,10 +5,11 @@ import styles from '../AuthDialogs.module.scss';
 
 interface MainFormProps {
     onOpenLogin: () => void,
+    onClose: () => void;
 }
 
 
-const MainForm: React.FC<MainFormProps> = ({ onOpenLogin }) => {
+const MainForm: React.FC<MainFormProps> = ({ onOpenLogin, onClose }) => {
     return (
         <>
             <Typography className={styles.title}>

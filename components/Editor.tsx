@@ -1,11 +1,19 @@
 import React, { useEffect } from 'react'
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { OutputData } from '@editorjs/editorjs';
 
-const Editor: React.FC = () => {
+interface EditorProps {
+    setBlocks: (blocks: OutputData['blocks']) => void,
+}
+
+const Editor: React.FC<EditorProps> = ({ setBlocks }) => {
     useEffect(() => {
         const editor = new EditorJS({
             holder: 'editor',
-            placeholder: 'Введите текст вашей статьи'
+            placeholder: 'Введите текст вашей статьи',
+            onChange: async (api, event) => {
+                const { blocks } = await editor.save()
+                setBlocks(blocks)
+            }
         })
 
         return () => {
@@ -15,7 +23,7 @@ const Editor: React.FC = () => {
         }
     }, [])
     return (
-        <div id='editor' />
+        <div onChange={(e) => console.log(e.target)} id='editor' />
     )
 }
 

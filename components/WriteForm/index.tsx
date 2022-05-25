@@ -4,25 +4,24 @@ import { Input } from '@material-ui/core';
 import style from './WriteForm.module.scss'
 import Head from 'next/dist/shared/lib/head';
 import { Button } from '@material-ui/core';
-
+import { useState } from 'react';
 
 const Editor = dynamic(() => import('../Editor'), { ssr: false })
 
-interface WriteFormProps {
-    title?: string,
-}
 
-const WriteForm: React.FC<WriteFormProps> = ({ title }) => {
 
+const WriteForm: React.FC = () => {
+    const [title, setTitle] = useState('');
+    const [blocks, setBlocks] = useState([]);
     return (
 
         <div>
             <Head>
                 <title>Write Post</title>
             </Head>
-            <Input classes={{ root: style.titleField }} placeholder='Заголовок' defaultValue={title} />
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} classes={{ root: style.titleField }} placeholder='Заголовок' defaultValue={title} />
             <div className={style.editor}>
-                <Editor />
+                <Editor setBlocks={setBlocks} />
             </div>
             <Button style={{ height: 42 }} variant="contained" color="primary">
                 Опубликовать
