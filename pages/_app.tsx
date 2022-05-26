@@ -2,7 +2,7 @@ import { MuiThemeProvider, CssBaseline } from '@material-ui/core';
 import { Provider } from 'react-redux';
 import Head from 'next/dist/shared/lib/head';
 import { parseCookies } from 'nookies';
-import { UserApi } from '../utils/api';
+import { UserApi } from '../utils/api/user';
 import { setUserData } from '../redux/slices/user';
 import '../styles/globals.scss';
 import 'macro-css';
@@ -10,6 +10,7 @@ import 'macro-css';
 import { Header } from '../components/Header';
 import { theme } from '../theme';
 import { store, wrapper } from '../redux/store';
+import { Api } from '../utils/api';
 function MyApp({ Component, pageProps }) {
   return (
     <MuiThemeProvider theme={theme}>
@@ -32,21 +33,20 @@ function MyApp({ Component, pageProps }) {
 MyApp.getInitialProps = wrapper.getInitialAppProps((store) => {
   return async ({ ctx, Component }) => {
     try {
-      const { authToken } = parseCookies(ctx, 'token');
-      const userData = await UserApi.getUser(authToken);
+      const userData = await Api(ctx).user.getUser();
       store.dispatch(setUserData(userData))
-      return {
-        pageProps: {
-          ...(Component.getInitialProps ? await Component.getInitialProps({ ...ctx, store }) : {}),
-        },
-      }
     } catch (error) {
-      console.log(error)
-      return {
-        pageProps: {
-          ...(Component.getInitialProps ? await Component.getInitialProps({ ...ctx, store }) : {}),
-        },
+      if (ctx.asPath === '/write') {
+        ctx.res?.writeHead(302, {
+          Location: '/404'
+        })
+        ctx.res?.end()
       }
+    }
+    return {
+      pageProps: {
+        ...(Component.getInitialProps ? await Component.getInitialProps({ ...ctx, store }) : {}),
+      },
     }
   }
 })

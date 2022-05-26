@@ -8,10 +8,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { loginValidation } from '../../../utils/schemas/loginValidation'
 import FormField from '../../FormField';
 import { setCookie } from 'nookies';
-import { UserApi } from '../../../utils/api/index';
+import { UserApi } from '../../../utils/api/user';
 import { LoginDto } from '../../../utils/api/types';
 import { useAppDispatch } from '../../../redux/hooks';
 import { setUserData } from '../../../redux/slices/user';
+import { Api } from '../../../utils/api';
 
 interface LoginFormProps {
     onOpenMain: () => void,
@@ -30,7 +31,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onOpenMain, onOpenRegister, onClo
 
     const onSubmit = async (dto: LoginDto) => {
         try {
-            const data = await UserApi.login(dto);
+            const data = await Api().user.login(dto);
             setCookie(null, 'authToken', data.token, {
                 maxAge: 30 * 24 * 60 * 60,
                 path: '/'

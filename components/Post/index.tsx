@@ -3,20 +3,38 @@ import { Paper, Typography } from '@material-ui/core';
 import Image from 'next/image';
 
 import styles from './Post.module.scss';
+import { OutputData } from '@editorjs/editorjs';
+import { PostActions } from '../PostActions';
 
-export const Post: React.FC = () => {
+interface IPost {
+  title: string,
+  description: string,
+  id: number,
+  views?: number,
+  updated?: string,
+  created?: string,
+  tags?: string,
+}
+
+export const Post: React.FC<IPost> = ({ title, id, description }) => {
   return (
     <Paper elevation={0} className="p-20" classes={{ root: styles.paper }}>
       <Typography variant="h5" className={styles.title}>
-        <a href="#">
-          Кот прилёг отдохнуть в английском парке миниатюр — и стал героем шуток и фотожаб о
-          «гигантском пушистом захватчике»
+        <a href={`/posts/${id}`}>
+          {title}
         </a>
       </Typography>
       <Typography className="mt-10 mb-15">
-        Пока одни не могли соотнести размеры животного и окружения, другие начали создавать
-        апокалиптические сюжеты с котом в главной роли.
+        {description}
       </Typography>
+
+      <img
+        src="/images/image-1.jpg"
+        height={500}
+        width={600}
+        alt={title}
+      />
+      <PostActions />
     </Paper>
   );
 };

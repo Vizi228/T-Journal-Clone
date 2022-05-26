@@ -1,8 +1,8 @@
 import { NextPage } from 'next';
 
 import React from 'react';
-import { MainLayout } from '../layouts/MainLayout';
-import WriteForm from '../components/WriteForm';
+import { MainLayout } from '../../layouts/MainLayout';
+import WriteForm from '../../components/WriteForm';
 
 
 interface WritePageProps { }
@@ -16,5 +16,14 @@ const WritePage: NextPage = ({ }: WritePageProps) => {
         </div>
     )
 }
+
+export const getServerSideProps = async (ctx) => {
+    return {
+        props: {
+            posts: null,
+        }
+    }
+}
+
 
 export default WritePage
