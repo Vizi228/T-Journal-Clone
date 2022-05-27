@@ -9,7 +9,6 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = ({ posts }) => {
-  console.log(posts)
   return (
     <MainLayout>
       {posts && posts.map((item) => (

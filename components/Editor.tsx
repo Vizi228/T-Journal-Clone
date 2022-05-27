@@ -3,9 +3,10 @@ import EditorJS, { OutputData } from '@editorjs/editorjs';
 
 interface EditorProps {
     setBlocks: (blocks: OutputData['blocks']) => void,
+    initialValue?: OutputData['blocks']
 }
 
-const Editor: React.FC<EditorProps> = ({ setBlocks }) => {
+const Editor: React.FC<EditorProps> = ({ setBlocks, initialValue }) => {
     useEffect(() => {
         const editor = new EditorJS({
             holder: 'editor',
@@ -13,6 +14,9 @@ const Editor: React.FC<EditorProps> = ({ setBlocks }) => {
             onChange: async (api, event) => {
                 const { blocks } = await editor.save()
                 setBlocks(blocks)
+            },
+            data: {
+                blocks: initialValue
             }
         })
 
@@ -23,7 +27,7 @@ const Editor: React.FC<EditorProps> = ({ setBlocks }) => {
         }
     }, [])
     return (
-        <div onChange={(e) => console.log(e.target)} id='editor' />
+        <div id='editor' />
     )
 }
 

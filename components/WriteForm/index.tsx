@@ -7,26 +7,32 @@ import { Button } from '@material-ui/core';
 import { useState } from 'react';
 import { Api } from '../../utils/api';
 import { useRouter } from 'next/router'
+import { PostItem } from '../../utils/api/types';
 
 
 const Editor = dynamic(() => import('../Editor'), { ssr: false })
 
+interface WriteFormProps {
+    data?: PostItem
+}
 
+const WriteForm: React.FC<WriteFormProps> = ({ data }) => {
 
-const WriteForm: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState([]);
+    const [title, setTitle] = useState(data?.title || '');
+    const [body, setBody] = useState(data?.body || []);
     const route = useRouter();
     const onAddPost = async () => {
         try {
-            setIsLoading(true)
-            const post = await Api().posts.create({
-                title,
-                body
-            })
-            setIsLoading(false)
-            route.push('/');
+            setIsLoading(true);
+            const postDto = { title, body }
+            if (data) {
+                const post = await Api().posts.update(postDto, data.id)
+            } else {
+                const post = await Api().posts.create(postDto)
+                route.push('/');
+            }
+            setIsLoading(false);
         } catch (error) {
             console.warn(error)
             error('Произошла ошибка во время оправки статьи')
@@ -41,10 +47,10 @@ const WriteForm: React.FC = () => {
             </Head>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} classes={{ root: style.titleField }} placeholder='Заголовок' defaultValue={title} />
             <div className={style.editor}>
-                <Editor setBlocks={setBody} />
+                <Editor initialValue={data?.body || []} setBlocks={setBody} />
             </div>
             <Button disabled={isLoading} onClick={onAddPost} style={{ height: 42 }} variant="contained" color="primary">
-                Опубликовать
+                {data ? 'Сохранить' : 'Опубликовать'}
             </Button>
         </div>
     )
