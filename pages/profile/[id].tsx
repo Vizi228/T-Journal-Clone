@@ -4,11 +4,36 @@ import {
   SettingsOutlined as SettingsIcon,
   TextsmsOutlined as MessageIcon,
 } from '@material-ui/icons';
+import { NextPage } from 'next';
+import { destroyCookie, setCookie } from 'nookies';
 
 import { Post } from '../../components/Post';
 import { MainLayout } from '../../layouts/MainLayout';
 
-export default function Profile() {
+import { Api } from '../../utils/api';
+import { ResponseUser, PostItem } from '../../utils/api/types';
+import { useAppDispatch } from '../../redux/hooks';
+import { setUserData } from '../../redux/slices/user';
+import { useRouter } from 'next/router';
+
+interface ProfileProps {
+  userData: ResponseUser,
+  isMe: boolean,
+  posts: PostItem[],
+}
+
+
+const Profile: NextPage<ProfileProps> = ({ userData, isMe, posts }) => {
+  posts = posts && posts.filter(item => item.user.id === userData.id);
+  const dispatch = useAppDispatch();
+  const router = useRouter()
+  const logout = () => {
+    dispatch(setUserData(null));
+    destroyCookie(null, 'authToken');
+    router.push('/');
+  }
+
+
   return (
     <MainLayout contentFullWidth hideComments>
       <Paper className="pl-20 pr-20 pt-20 mb-30" elevation={0}>
@@ -19,21 +44,28 @@ export default function Profile() {
               src="https://leonardo.osnova.io/5ffeac9a-a0e5-5be6-98af-659bfaabd2a6/-/scale_crop/108x108/-/format/webp/"
             />
             <Typography style={{ fontWeight: 'bold' }} className="mt-10" variant="h4">
-              Amon Bower
+              {userData.fullName}
             </Typography>
           </div>
           <div>
-            <Link href="/profile/settings">
-              <Button
-                style={{ height: 42, minWidth: 45, width: 45, marginRight: 10 }}
-                variant="contained">
-                <SettingsIcon />
-              </Button>
-            </Link>
+            {isMe &&
+              <Link href="/profile/settings">
+                <Button
+                  style={{ height: 42, minWidth: 45, width: 45, marginRight: 10 }}
+                  variant="contained">
+                  <SettingsIcon />
+                </Button>
+              </Link>
+            }
             <Button style={{ height: 42 }} variant="contained" color="primary">
               <MessageIcon className="mr-10" />
               Написать
             </Button>
+            {isMe &&
+              <Button onClick={logout} style={{ height: 42, marginLeft: 10 }} variant="contained" color="primary">
+                Выйти
+              </Button>
+            }
           </div>
         </div>
         <div className="d-flex mb-10 mt-10">
@@ -42,7 +74,7 @@ export default function Profile() {
           </Typography>
           <Typography>2 подписчика</Typography>
         </div>
-        <Typography>На проекте с 15 сен 2016</Typography>
+        <Typography>На проекте с {userData.createdAt.slice(0, 10)}</Typography>
 
         <Tabs className="mt-20" value={0} indicatorColor="primary" textColor="primary">
           <Tab label="Статьи" />
@@ -52,7 +84,9 @@ export default function Profile() {
       </Paper>
       <div className="d-flex align-start">
         <div className="mr-20 flex">
-          {/* <Post /> */}
+          {posts && posts.map(item => (
+            <Post {...item} />
+          ))}
         </div>
         <Paper style={{ width: 300 }} className="p-20 mb-20" elevation={0}>
           <b>Подписчики</b>
@@ -71,3 +105,50 @@ export default function Profile() {
     </MainLayout>
   );
 }
+
+export const getServerSideProps = async (ctx) => {
+  try {
+    const id = ctx.params.id;
+    const targetUser = await Api(ctx).user.getTargetUser(id);
+    const posts = await Api().posts.getAllPosts();
+    try {
+      const currentUser = await Api(ctx).user.getUser();
+      if (currentUser && (currentUser.id !== targetUser.id)) {
+        return {
+          props: {
+            userData: targetUser,
+            isMe: false,
+            posts,
+          }
+        }
+      } else {
+        return {
+          props: {
+            userData: currentUser,
+            isMe: true,
+            posts,
+
+          }
+        }
+      }
+    } catch {
+      return {
+        props: {
+          userData: targetUser,
+          isMe: false,
+          posts,
+
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  return {
+    props: {
+    }
+  }
+}
+
+
+export default Profile

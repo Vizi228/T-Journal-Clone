@@ -2,10 +2,16 @@ import React, { useState } from 'react'
 import { Comment } from '../Comment';
 import { Divider, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import WriteComment from '../WriteComment';
-import data from '../../../data'
+import { useComments } from '../../../hooks/Comment';
 
-const AllComments: React.FC = () => {
+interface AllCommentsProps {
+    postId: number
+}
+
+const AllComments: React.FC<AllCommentsProps> = ({ postId }) => {
     const [activeTab, setActiveTab] = useState(0);
+    const { comments } = useComments(postId)
+
     return (
         <>
             <Paper elevation={0} className="mt-40 p-30">
@@ -18,10 +24,10 @@ const AllComments: React.FC = () => {
                 </Tabs>
                 <Divider />
                 <div className="mb-20" />
-                <WriteComment />
+                <WriteComment postId={+postId} />
 
-                {data.comments && data.comments[activeTab].map((item, i) => (
-                    <Comment key={i} />
+                {comments && comments.map((item, i) => (
+                    <Comment user={item.user} id={item.id} text={item.text} key={i} />
                 ))}
             </Paper>
         </>

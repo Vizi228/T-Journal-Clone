@@ -26,3 +26,18 @@ export type PostItem = {
     createdAt: string,
     updatedAt: string
 }
+type CommentPostResponse = {
+    id: number,
+    title: string
+}
+export type CommentItem = {
+    text: string,
+    id: number,
+    user: ResponseUser,
+    createdAt: string,
+    updatedAt: string,
+    post: CommentPostResponse,
+}
+export type ResponseSearch = {
+    items: PostItem[],
+}

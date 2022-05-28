@@ -12,10 +12,18 @@ import {
 
 import { MainLayout } from '../layouts/MainLayout';
 import { FollowButton } from '../components/FollowButton';
+import { Api } from '../utils/api';
+import { NextPage } from 'next';
+import { ResponseUser } from '../utils/api/types';
 
-export default function Rating() {
+interface RatingProps {
+  users: ResponseUser[],
+}
+
+const Rating: NextPage<RatingProps> = ({ users }) => {
+  console.log(users)
   return (
-    <MainLayout>
+    <MainLayout hideComments>
       <Paper className="pl-20 pt-20 pr-20 mb-20" elevation={0}>
         <Typography variant="h5" style={{ fontWeight: 'bold', fontSize: 30, marginBottom: 6 }}>
           Рейтинг сообществ и блогов
@@ -41,18 +49,39 @@ export default function Rating() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row">
-                <span className="mr-15">1</span>Вася Пупкин
-              </TableCell>
-              <TableCell align="right">540</TableCell>
-              <TableCell align="right">
-                <FollowButton />
-              </TableCell>
-            </TableRow>
+            {users && users.map((item, i) => (
+              <TableRow key={item.id}>
+                <TableCell component="th" scope="row">
+                  <span className="mr-15">{i + 1}</span>{item.fullName}
+                </TableCell>
+                <TableCell align="right">640</TableCell>
+                <TableCell align="right">
+                  <FollowButton />
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Paper>
     </MainLayout>
   );
+}
+
+export default Rating
+
+export const getServerSideProps = async ctx => {
+  try {
+    const data = await Api().user.getAll();
+    return {
+      props: {
+        users: data
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  return {
+    props: {
+    }
+  }
 }

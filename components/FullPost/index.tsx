@@ -7,6 +7,7 @@ import UserAddIcon from '@material-ui/icons/PersonAddOutlined';
 import styles from './FullPost.module.scss';
 import { OutputData } from '@editorjs/editorjs';
 import { ResponseUser } from '../../utils/api/types';
+import Link from 'next/link';
 
 interface FullPostProps {
   body: OutputData['blocks'],
@@ -35,14 +36,19 @@ const FullPost: React.FC<FullPostProps> = ({ body, createdAt, updatedAt, user, v
           </div>
           <div className={styles.views}>Views:{views}</div>
           <div className="d-flex justify-between align-center mt-30 mb-30">
-            <div className={styles.userInfo}>
-              <img
-                src="https://leonardo.osnova.io/104b03b4-5173-fd9f-2af9-b458dddc4a23/-/scale_crop/108x108/-/format/webp/"
-                alt="Avatar"
-              />
-              <b>{user.fullName}</b>
-              <span>+1685</span>
-            </div>
+            <Link href={`/profile/${user.id}`}>
+              <a >
+                <div className={styles.userInfo}>
+                  <img
+                    src="https://leonardo.osnova.io/5ffeac9a-a0e5-5be6-98af-659bfaabd2a6/-/scale_crop/108x108/-/format/webp/"
+                    alt="Avatar"
+                  />
+                  <b>{user.fullName}</b>
+                  <span>+1685</span>
+                </div>
+              </a>
+            </Link>
+
             <div>
 
               <Button variant="contained" className="mr-15">

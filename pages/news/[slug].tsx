@@ -12,9 +12,9 @@ interface IFullPostPage {
 
 const FullPostPage: NextPage<IFullPostPage> = ({ postInfo }) => {
   return (
-    <MainLayout className="mb-50" contentFullWidth>
+    <MainLayout postId={postInfo.id} className="mb-50" contentFullWidth>
       <FullPost {...postInfo} />
-      <AllComments />
+      <AllComments postId={postInfo.id} />
     </MainLayout>
   );
 }

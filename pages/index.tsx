@@ -10,7 +10,7 @@ interface HomeProps {
 
 const Home: NextPage<HomeProps> = ({ posts }) => {
   return (
-    <MainLayout>
+    <MainLayout hideComments>
       {posts && posts.map((item) => (
         <Post title={item.title} id={item.id} description={item.description} key={item.id} />
       ))}
